@@ -1,0 +1,128 @@
+affinity:
+  defaultPodAntiAffinity: true
+
+appContainerPort: 3001
+
+appEnv:
+  - name: BASE_URL
+    value: "https://carso.me/"
+  - name: DB_HOST
+    value: "martech-slim-urlshortener.cdx3xilong6d.ap-southeast-1.rds.amazonaws.com"
+  - name: DB_NAME
+    value: "martechtools"
+  - name: DB_USERNAME
+    value: "martech_api_prod"
+  - name: DD_ENV
+    value: "prod"
+  - name: DD_APM_ENABLED
+    value: "false"
+  - name: DD_TAGS
+    value: "domain:b2c, country:my, env:prod"
+  - name: DD_LOGS_INJECTION
+    value: "true"
+  - name: DD_TRACE_SAMPLE_RATE
+    value: "1"
+  - name: DD_AGENT_HOST
+    valueFrom:
+      fieldRef:
+        fieldPath: status.hostIP
+  - name: DD_SERVICE
+    value: "martechapi-prod-my"
+  - name: NODE_ENV
+    value: "prod"
+  - name: PORT
+    value: "3001"
+  - name: DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: martech-api-secret
+        key: dbPassword
+  - name: AUTH_KEY
+    valueFrom:
+      secretKeyRef:
+        name: martech-api-secret
+        key: authKey
+
+defaultCommonSecret: false
+
+extraContainer:
+  enabled: false
+
+fullnameOverride: martech-api
+
+hpa:
+  averageCpuUtilization: 60
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+
+image:
+  repository: 209826661801.dkr.ecr.ap-southeast-1.amazonaws.com/martech-api
+  tag: master
+
+ingress:
+  enabled: true
+  annotations:
+    alb.ingress.kubernetes.io/actions.redirect-to-www: '{"Type":"redirect","RedirectConfig":{"Host":"www.carso.me","Port":"443","Protocol":"HTTPS","StatusCode":"HTTP_302"}}'
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-southeast-1:209826661801:certificate/bac35ce2-3a81-4e6f-b8d4-2ea151c050e2
+    alb.ingress.kubernetes.io/group.name: b2c-martech-my
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/subnets: subnet-0d0a8b0f096991d21,subnet-00284887236176fb4,subnet-084dd4dd4db1a0883
+    kubernetes.io/ingress.class: alb
+  hosts:
+    - host: carso.me
+      paths:
+        - path: /
+          backend:
+            serviceName: redirect-to-www
+            servicePort: use-annotation
+    - host: www.carso.me
+      paths:
+        - path: /
+
+nameOverride: martech-api
+
+ports:
+- containerPort: 3001
+  protocol: TCP
+
+readinessProbe:
+  failureThreshold: 3
+  httpGet:
+    path: /
+    port: 3001
+    scheme: HTTP
+  initialDelaySeconds: 60
+  periodSeconds: 5
+  successThreshold: 1
+  timeoutSeconds: 1
+
+replicaCount: 1
+
+resources: 
+  limits: 
+    cpu: 500m
+    memory: 1024Mi
+  requests: 
+    cpu: 250m
+    memory: 512Mi
+
+service:
+  enabled: true
+  type: NodePort
+  port: 80
+
+serviceAccountName: martech
+
+startupProbe:
+  failureThreshold: 180
+  httpGet:
+    path: /
+    port: 3001
+    scheme: HTTP
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 1
+
+tier: backend

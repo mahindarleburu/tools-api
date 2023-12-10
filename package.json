@@ -1,0 +1,29 @@
+{
+  "name": "martech-api-services",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js",
+    "migrate:prod":"npx sequelize-cli db:migrate --env=production"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.com:carsome/martech/martech-api-services.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.2",
+    "express": "^4.18.1",
+    "mysql2": "^2.3.3",
+    "nanoid": "^4.0.0",
+    "qrcode": "^1.5.1",
+    "sequelize": "^6.23.1",
+    "ua-parser-js": "^1.0.32",
+    "validator": "^13.7.0"
+  }
+}

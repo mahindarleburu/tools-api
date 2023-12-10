@@ -1,0 +1,8 @@
+NODE_ENV=prod
+PORT=3001
+DB_HOST=localhost
+DB_NAME=martechtools
+DB_USERNAME=root
+DB_PASSWORD=root
+BASE_URL=https://carso.me/
+AUTH_KEY=your_auth_key

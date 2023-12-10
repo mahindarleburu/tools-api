@@ -1,0 +1,136 @@
+stages:
+  - build
+  - approve
+  - deploy
+
+variables:
+  BUILD_IMAGE_EXTRA_ARGS: ""
+  ENVIRONMENT: "prod"
+  HELM_SECRET_NAME: "martech-api-secret"
+  HELM_SERVICE_NAME: "martech-api"
+  REGION: "ap-southeast-1"
+
+.prod_my:
+  environment: prod-my
+  variables:
+    COUNTRY: "my"
+    K8S_NAMESPACE: "b2c-martech-my"
+    SECRET_ARN: "arn:aws:secretsmanager:ap-southeast-1:209826661801:secret:prod/martech/apis/my-HHzcje"
+
+.build:
+  image:
+    name: docker:latest
+  interruptible: true
+  services:
+    - docker:20.10.17-dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+  before_script:
+    - apk add --no-cache curl aws-cli
+    - aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $DOCKER_REGISTRY
+  script:
+    - |
+      docker build \
+      --file k8s-resource/${ENVIRONMENT}/docker/Dockerfile-$COUNTRY \
+      --tag ${DOCKER_REGISTRY}/${HELM_SERVICE_NAME}:${COUNTRY}-$CI_COMMIT_SHORT_SHA \
+      --tag ${DOCKER_REGISTRY}/${HELM_SERVICE_NAME}:${COUNTRY}-$CI_COMMIT_REF_SLUG \
+      $BUILD_IMAGE_EXTRA_ARGS .
+    - docker push --all-tags ${DOCKER_REGISTRY}/$HELM_SERVICE_NAME
+
+.db_migration:
+  image: ${DOCKER_REGISTRY}/${HELM_SERVICE_NAME}:${COUNTRY}-$CI_COMMIT_SHORT_SHA
+  script:
+    - cd /usr/src/app
+    - npm run migrate:prod
+
+.deploy:
+  image: 209826661801.dkr.ecr.ap-southeast-1.amazonaws.com/alpine/helm:3.3.4
+  interruptible: true
+  before_script:
+    - apk update && apk add curl aws-cli
+    - curl --location --remote-name "https://dl.k8s.io/release/$(curl --location --silent https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    - install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+  script:
+    - cd k8s-resource/$ENVIRONMENT
+    - sh helm/update_chart.sh
+    - |
+      helm upgrade \
+      --atomic \
+      --history-max 2 \
+      --install \
+      --namespace $K8S_NAMESPACE \
+      --set appVersion=${COUNTRY}-$CI_COMMIT_SHORT_SHA \
+      --set image.tag=${COUNTRY}-$CI_COMMIT_SHORT_SHA \
+      --timeout 10m \
+      --values values-${COUNTRY}.yaml \
+      $HELM_SERVICE_NAME ./helm
+
+.deploy_secret:
+  image: amazon/aws-cli:2.7.23
+  before_script:
+    - yum update -y && yum install -y gettext wget
+    - wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && chmod 0755 /usr/bin/yq
+    - curl --location --remote-name "https://dl.k8s.io/release/$(curl --location --silent https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    - install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+    - unset AWS_ACCESS_KEY_ID && unset AWS_SECRET_ACCESS_KEY
+  script:
+    - cd k8s-resource/${ENVIRONMENT}/secret
+    - 'aws secretsmanager get-secret-value --secret-id $SECRET_ARN | yq .SecretString | yq e -P - | sed "s,: ,=," > ${HELM_SERVICE_NAME}.env'
+    - sh kustomization.sh
+
+build_image_prod_my:
+  extends:
+    - .build
+    - .prod_my
+  stage: build
+
+approve:
+  environment: carsome-production
+  script:
+    - echo $GITLAB_USER_EMAIL
+  stage: approve
+  only:
+    - develop
+  when: manual
+
+execute_db_migration:
+  extends:
+    - .db_migration
+    - .prod_my
+  needs:
+    - approve
+  stage: deploy
+  tags:
+    - prod-my-b2c
+    - private-cluster-op
+  variables:
+    DB_HOST: "martech-slim-urlshortener.cdx3xilong6d.ap-southeast-1.rds.amazonaws.com"
+    DB_NAME: "martechtools"
+    DB_PASSWORD: $DB_PASSWORD
+    DB_USERNAME: "martech_api_prod"
+    NODE_ENV: "prod"
+  when: manual
+
+deploy_secret_prod_my:
+  extends:
+    - .deploy_secret
+    - .prod_my
+  needs:
+    - approve
+  stage: deploy
+  tags:
+    - prod-my-b2c
+    - private-cluster-op
+  when: manual
+
+deploy_prod_my:
+  extends:
+    - .deploy
+    - .prod_my
+  needs:
+    - approve
+  stage: deploy
+  tags:
+    - prod-my-b2c
+    - private-cluster-op
+  when: manual
