@@ -1,5 +1,5 @@
 {
-  "name": "martech-api-services",
+  "name": "connectwyze-api-services",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@gitlab.com:carsome/martech/martech-api-services.git"
+    "url": "git@github.com:mahindarleburu/tools-api.git"
   },
   "author": "",
   "license": "ISC",

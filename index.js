@@ -40,5 +40,5 @@ app.use("/api/error_logger", errorLogsRoute);
 app.use("/api/unreachable_leads", unreachableLeadsLogsRoute)
 
 app.listen(config.PORT, () => {
-  console.log(`MarTech API Service running on port ${config.PORT}`);
+  console.log(`Connectwyze Service running on port ${config.PORT}`);
 });

@@ -1,10 +1,10 @@
 import dotenv from 'dotenv'
 dotenv.config()
+
+
 const config = {
   NODE_ENV: process.env.NODE_ENV,
   PORT: process.env.PORT,
-
-  /** DATABASE */
   db: {
     DB_HOST: process.env.DB_HOST,
     DB_USER: process.env.DB_USERNAME,
@@ -17,7 +17,6 @@ const config = {
       useUTC: false,
     },
     timezone: '+08:00', 
-    // pool is optional, it will be used for Sequelize connection pool configuration
     pool: {
       max: 5,
       min: 0,
@@ -25,12 +24,10 @@ const config = {
       idle: 10000
     }
   },
-
-  /** AUTH KEY */
   auth: {
     secret: process.env.AUTH_KEY ? process.env.AUTH_KEY : "e5246b1bdaa7c2b1cc3d8f0e65f4c7bec26c3936"
   },
-  baseUrl:process.env.BASE_URL
+  baseUrl: process.env.BASE_URL
 };
 
 export default config;
