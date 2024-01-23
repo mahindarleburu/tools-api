@@ -7,9 +7,7 @@ import UtmMediumModel from "./medium.model.js";
 import UtmSourceMediumMapping from "./source_medium_mapping.model.js";
 import dotenv from 'dotenv'
 import EventLogsModel from "./eventLogs.model.js";
-import LeadEngineLogsModel from "./leadEngineLogs.model.js"
 import ErrorLogsModel from "./errorLogs.model.js";
-import UnreachableLeadsLogsModel from "./unreachableLeadsLogs.model.js";
 
 dotenv.config()
 const sequelize = new Sequelize(config.db.DB_NAME, config.db.DB_USER, config.db.DB_PASS, {
@@ -43,10 +41,7 @@ db.utmSource = UtmSourceModel(sequelize, Sequelize, DataTypes);
 db.utmMedium = UtmMediumModel(sequelize, Sequelize, DataTypes);
 db.utmSourceMediumMapping = UtmSourceMediumMapping(sequelize, Sequelize, DataTypes);
 db.eventLogs = EventLogsModel(sequelize, Sequelize, DataTypes);
-db.leadEngineLogs = LeadEngineLogsModel(sequelize, Sequelize, DataTypes);
 db.ErrorLogs = ErrorLogsModel(sequelize, Sequelize, DataTypes); 
-db.UnreachableLeadsLogs = UnreachableLeadsLogsModel(sequelize, Sequelize, DataTypes);
-
 
 // 1 to Many Relation
 db.oneLink.hasMany(db.OneLinkActivity, {

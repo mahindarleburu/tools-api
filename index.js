@@ -7,12 +7,10 @@ import sourceRouter from "./routes/sourceRoute.js";
 import mediumRouter from "./routes/mediumRoute.js";
 import redirectController from "./routes/redirectRoute.js";
 import sourceMediumRoute from "./routes/sourceMediumRoute.js";
-import leadEngineRoute from "./routes/leadEngineRoute.js";
 import errorLogsRoute from "./routes/errorLogsRoute.js"
 import config from "./utils/config.js";
 import db from "./models/index.js";
 import { authVerify } from "./utils/functions.js";
-import unreachableLeadsLogsRoute from "./routes/unreachableLeadsLogsRoute.js"
 
 dotenv.config();
 const app = express();
@@ -35,9 +33,7 @@ app.use("/api/onelink", onelinkRouter);
 app.use("/api/source", sourceRouter);
 app.use("/api/medium", mediumRouter);
 app.use("/api/source_medium", sourceMediumRoute);
-app.use("/api/lead_engine", leadEngineRoute);
 app.use("/api/error_logger", errorLogsRoute);
-app.use("/api/unreachable_leads", unreachableLeadsLogsRoute)
 
 app.listen(config.PORT, () => {
   console.log(`Connectwyze Service running on port ${config.PORT}`);
