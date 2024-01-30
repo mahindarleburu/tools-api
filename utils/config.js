@@ -1,3 +1,5 @@
+import 'dotenv/config'
+
 const config = {
   NODE_ENV: process.env.NODE_ENV,
   PORT: process.env.PORT,
@@ -26,5 +28,6 @@ const config = {
   baseUrl: process.env.BASE_URL
 };
 
+console.log(config)
 
 export default config;
