@@ -1,15 +1,11 @@
-import dotenv from 'dotenv'
-dotenv.config()
-
-
 const config = {
-  NODE_ENV: process.env.NODE_ENV,
-  PORT: process.env.PORT,
+  NODE_ENV: 'prod',
+  PORT: 25060,
   db: {
-    DB_HOST: process.env.DB_HOST,
-    DB_USER: process.env.DB_USERNAME,
-    DB_PASS: process.env.DB_PASSWORD,
-    DB_NAME: process.env.DB_NAME,
+    DB_HOST: 'connectwyzedb-do-user-15605333-0.c.db.ondigitalocean.com',
+    DB_USER: 'doadmin',
+    DB_PASS: 'AVNS_Ldx480qP1mOtiS0YWq3',
+    DB_NAME: 'defaultdb',
     charset: 'utf8',
     collate: 'utf8_general_ci',
     dialect: 'mysql',
@@ -29,5 +25,7 @@ const config = {
   },
   baseUrl: process.env.BASE_URL
 };
+
+
 
 export default config;
