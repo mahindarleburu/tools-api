@@ -14,6 +14,7 @@ dotenv.config()
 const sequelize = new Sequelize(config.db.DB_NAME, config.db.DB_USER, config.db.DB_PASS, {
   host: config.db.DB_HOST,
   dialect: config.db.dialect,
+  port: config.PORT,
   define: {
     charset: 'utf8',
     collate: 'utf8_general_ci',
@@ -22,7 +23,6 @@ const sequelize = new Sequelize(config.db.DB_NAME, config.db.DB_USER, config.db.
     useUTC: false,
   },
   timezone: '+08:00', 
-  port: config.PORT,
   poll: {
     max: config.db.pool.max,
     min: config.db.pool.min,
@@ -30,6 +30,9 @@ const sequelize = new Sequelize(config.db.DB_NAME, config.db.DB_USER, config.db.
     idle: config.db.pool.idle,
   },
 });
+
+console.log('DB initialized')
+console.log(config)
 
 const db = {};
 
