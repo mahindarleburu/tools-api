@@ -10,6 +10,7 @@ import EventLogsModel from "./eventLogs.model.js";
 import ErrorLogsModel from "./errorLogs.model.js";
 
 dotenv.config()
+
 const sequelize = new Sequelize(config.db.DB_NAME, config.db.DB_USER, config.db.DB_PASS, {
   host: config.db.DB_HOST,
   dialect: config.db.dialect,
@@ -21,6 +22,7 @@ const sequelize = new Sequelize(config.db.DB_NAME, config.db.DB_USER, config.db.
     useUTC: false,
   },
   timezone: '+08:00', 
+  port: config.PORT,
   poll: {
     max: config.db.pool.max,
     min: config.db.pool.min,
