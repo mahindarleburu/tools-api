@@ -2,7 +2,7 @@ import 'dotenv/config'
 
 const config = {
   NODE_ENV: process.env.NODE_ENV,
-  PORT: process.env.PORT,
+  PORT: process.env.DB_PORT,
   db: {
     DB_HOST: process.env.DB_HOST,
     DB_USER: process.env.DB_USERNAME,
