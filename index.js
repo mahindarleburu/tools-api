@@ -35,6 +35,7 @@ app.use("/api/medium", mediumRouter);
 app.use("/api/source_medium", sourceMediumRoute);
 app.use("/api/error_logger", errorLogsRoute);
 
+
 app.listen(config.PORT, () => {
-  console.log(`Connectwyze API Service running on port ${config.PORT}`);
+  console.log(`MarTech API Service running on port ${config.PORT}`);
 });

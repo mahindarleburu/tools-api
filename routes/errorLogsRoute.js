@@ -5,4 +5,4 @@ const router = express.Router();
 
 router.route("/create").post(errorLogsController.createErrorLogs)
 
-export default router; 
+export default router;

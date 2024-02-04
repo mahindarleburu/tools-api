@@ -8,10 +8,10 @@ export const convertLowercaseUnderscore = (value)=>{
 }
 
 export const authVerify = (req, res, next)=> {
-    if (!req.headers.token) {
+    if (!req.headers.martech_token) {
       return res.status(403).json({ success:false, message: "Access Denied", data:{} });
     }
-    if( req.headers.token!== config?.auth?.secret){
+    if( req.headers.martech_token!== config?.auth?.secret){
       return res.status(403).json({ success:false, message: "Access Denied", data:{} });
     }
     next();

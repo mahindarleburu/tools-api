@@ -52,5 +52,5 @@ export const redirectOneLinkByCode = async (req, res) => {
 };
 
 export const homePage = (req, res) => {
-  res.send("Connectwyze API Service");
+  res.send("Martech API services!");
 };

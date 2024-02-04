@@ -10,11 +10,9 @@ import EventLogsModel from "./eventLogs.model.js";
 import ErrorLogsModel from "./errorLogs.model.js";
 
 dotenv.config()
-
 const sequelize = new Sequelize(config.db.DB_NAME, config.db.DB_USER, config.db.DB_PASS, {
   host: config.db.DB_HOST,
   dialect: config.db.dialect,
-  port: config.PORT,
   define: {
     charset: 'utf8',
     collate: 'utf8_general_ci',
@@ -31,9 +29,6 @@ const sequelize = new Sequelize(config.db.DB_NAME, config.db.DB_USER, config.db.
   },
 });
 
-console.log('DB initialized')
-console.log(config)
-
 const db = {};
 
 db.Sequelize = Sequelize;
@@ -47,6 +42,7 @@ db.utmMedium = UtmMediumModel(sequelize, Sequelize, DataTypes);
 db.utmSourceMediumMapping = UtmSourceMediumMapping(sequelize, Sequelize, DataTypes);
 db.eventLogs = EventLogsModel(sequelize, Sequelize, DataTypes);
 db.ErrorLogs = ErrorLogsModel(sequelize, Sequelize, DataTypes); 
+
 
 // 1 to Many Relation
 db.oneLink.hasMany(db.OneLinkActivity, {
